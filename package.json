@@ -1,0 +1,39 @@
+{
+  "name": "omnibot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src",
+    "lint:check": "eslint src/**/*.ts",
+    "lint:fix": "eslint --fix src/**/*.ts",
+    "prettier:check": "prettier --check .",
+    "prettier:write": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itzik1058/omnibot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/itzik1058/omnibot/issues"
+  },
+  "homepage": "https://github.com/itzik1058/omnibot#readme",
+  "dependencies": {
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.9",
+    "@typescript-eslint/eslint-plugin": "^6.5.0",
+    "@typescript-eslint/parser": "^6.5.0",
+    "eslint": "^8.48.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
