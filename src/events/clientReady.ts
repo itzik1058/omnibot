@@ -1,6 +1,6 @@
 import { Client, Events, REST, Routes } from "discord.js";
-import config from "../config";
-import DiscordEvent from "../event";
+import config from "../core/config";
+import DiscordEvent from "../core/event";
 
 export default class ClientReady extends DiscordEvent<Events.ClientReady> {
   async execute(client: Client<true>) {
@@ -8,15 +8,17 @@ export default class ClientReady extends DiscordEvent<Events.ClientReady> {
 
     const rest = new REST().setToken(client.token);
     await rest.put(
-      Routes.applicationGuildCommands(config.clientId, "192644286171316224"),
+      Routes.applicationGuildCommands(config.clientId, config.guildId),
       {
         body: this.omnibot.commands.map((value) => value.builder().toJSON()),
       }
     );
 
-    const registeredCommands = [...this.omnibot.commands.keys()];
-    console.info(
-      `registered command handlers for ${registeredCommands.join(", ")}`
-    );
+    const commandNames = [...this.omnibot.commands.keys()];
+    console.info(`registered command handlers for ${commandNames.join(", ")}`);
+
+    await Promise.all(this.omnibot.tasks.mapValues((task) => task.setup()));
+    const taskNames = [...this.omnibot.tasks.keys()];
+    console.info(`setup tasks ${taskNames.join(", ")}`);
   }
 }

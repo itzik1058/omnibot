@@ -1,9 +1,9 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import config from "./config";
-import Omnibot from "./omnibot";
+import config from "./core/config";
+import Omnibot from "./core/omnibot";
 
 process.on("uncaughtException", (error: Error) => {
-  console.error(error);
+  console.error(`Uncaught exception: ${error.stack}`);
 });
 
 const client = new Client({
@@ -22,4 +22,6 @@ const client = new Client({
   ],
 });
 const omnibot = new Omnibot(client);
-void omnibot.login(config.token);
+omnibot.login(config.token).catch((reason) => {
+  console.error(reason);
+});

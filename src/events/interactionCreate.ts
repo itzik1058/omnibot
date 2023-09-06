@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Events, Interaction } from "discord.js";
-import DiscordEvent from "../event";
+import DiscordEvent from "../core/event";
 
 export default class InteractionCreate extends DiscordEvent<Events.InteractionCreate> {
   async execute(interaction: Interaction) {
