@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
-import DiscordSlashCommand from "../core/command";
+import DiscordSlashCommand from "../core/command.js";
 
 export default class MemeCommand extends DiscordSlashCommand {
   builder() {
@@ -7,6 +7,8 @@ export default class MemeCommand extends DiscordSlashCommand {
   }
 
   async execute(interaction: CommandInteraction) {
-    await interaction.reply("meme");
+    await interaction.deferReply();
+    await interaction.deleteReply();
+    await this.omnibot.tasks.get("meme")?.execute();
   }
 }

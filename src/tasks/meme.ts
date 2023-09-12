@@ -1,5 +1,5 @@
-import Omnibot from "../core/omnibot";
-import { ErlangScheduledOmnibotTask } from "../core/task";
+import Omnibot from "../core/omnibot.js";
+import { ErlangScheduledOmnibotTask } from "../core/task.js";
 
 export default class MemeTask extends ErlangScheduledOmnibotTask {
   constructor(omnibot: Omnibot) {

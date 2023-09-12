@@ -1,6 +1,6 @@
 import { Awaitable } from "discord.js";
-import Omnibot from "./omnibot";
-import { randomErlang } from "./utils";
+import Omnibot from "./omnibot.js";
+import { randomErlang } from "./utils.js";
 
 export abstract class OmnibotTask {
   protected omnibot: Omnibot;

@@ -1,5 +1,6 @@
 {
   "name": "omnibot",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -24,7 +25,9 @@
   "homepage": "https://github.com/itzik1058/omnibot#readme",
   "dependencies": {
     "discord.js": "^14.13.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "glob": "^10.3.4",
+    "untildify": "^5.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.5.9",

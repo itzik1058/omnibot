@@ -1,12 +1,12 @@
 import { Client, Collection, Events } from "discord.js";
-import MemeCommand from "../commands/meme";
-import { MimicCommand, MimicScheduleCommand } from "../commands/mimic";
-import ClientReady from "../events/clientReady";
-import InteractionCreate from "../events/interactionCreate";
-import MemeTask from "../tasks/meme";
-import MimicTask from "../tasks/mimic";
-import DiscordSlashCommand from "./command";
-import { OmnibotTask } from "./task";
+import MemeCommand from "../commands/meme.js";
+import { MimicCommand, MimicScheduleCommand } from "../commands/mimic.js";
+import ClientReady from "../events/clientReady.js";
+import InteractionCreate from "../events/interactionCreate.js";
+import MemeTask from "../tasks/meme.js";
+import MimicTask from "../tasks/mimic.js";
+import DiscordSlashCommand from "./command.js";
+import { OmnibotTask } from "./task.js";
 
 export default class Omnibot {
   public commands: Collection<string, DiscordSlashCommand>;

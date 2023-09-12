@@ -1,5 +1,5 @@
 import { Awaitable, ClientEvents } from "discord.js";
-import Omnibot from "./omnibot";
+import Omnibot from "./omnibot.js";
 
 export default abstract class DiscordEvent<Event extends keyof ClientEvents> {
   protected omnibot: Omnibot;

@@ -1,6 +1,6 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import config from "./core/config";
-import Omnibot from "./core/omnibot";
+import config from "./core/config.js";
+import Omnibot from "./core/omnibot.js";
 
 process.on("uncaughtException", (error: Error) => {
   console.error(`Uncaught exception: ${error.stack}`);

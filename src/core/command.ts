@@ -1,5 +1,5 @@
 import { Awaitable, CommandInteraction, SlashCommandBuilder } from "discord.js";
-import Omnibot from "./omnibot";
+import Omnibot from "./omnibot.js";
 
 export default abstract class DiscordSlashCommand {
   protected omnibot: Omnibot;

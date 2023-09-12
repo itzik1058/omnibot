@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
-import DiscordSlashCommand from "../core/command";
+import DiscordSlashCommand from "../core/command.js";
 
 export class MimicCommand extends DiscordSlashCommand {
   builder() {
@@ -7,7 +7,9 @@ export class MimicCommand extends DiscordSlashCommand {
   }
 
   async execute(interaction: CommandInteraction) {
-    await interaction.reply("mimic");
+    await interaction.deferReply();
+    await interaction.deleteReply();
+    await this.omnibot.tasks.get("mimic")?.execute();
   }
 }
 
@@ -19,6 +21,6 @@ export class MimicScheduleCommand extends DiscordSlashCommand {
   }
 
   async execute(interaction: CommandInteraction) {
-    await interaction.reply("schedule");
+    await interaction.reply({ content: "schedule", ephemeral: true });
   }
 }
