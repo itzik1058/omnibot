@@ -1,0 +1,7 @@
+services:
+  omnibot:
+    image: omnibot
+    container_name: omnibot
+    build:
+      context: .
+    restart: unless-stopped
