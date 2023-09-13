@@ -1,6 +1,6 @@
 import { Client, Collection, Events } from "discord.js";
 import MemeCommand from "../commands/meme.js";
-import { MimicCommand, MimicScheduleCommand } from "../commands/mimic.js";
+import { MimicCommand } from "../commands/mimic.js";
 import ClientReady from "../events/clientReady.js";
 import InteractionCreate from "../events/interactionCreate.js";
 import MemeTask from "../tasks/meme.js";
@@ -17,11 +17,10 @@ export default class Omnibot {
   public constructor(client: Client) {
     this.client = client;
     this.commands = new Collection(
-      [
-        new MemeCommand(this),
-        new MimicCommand(this),
-        new MimicScheduleCommand(this),
-      ].map((command) => [command.builder().name, command])
+      [new MemeCommand(this), new MimicCommand(this)].map((command) => [
+        command.json().name,
+        command,
+      ])
     );
     this.tasks = new Collection();
     this.tasks.set("meme", new MemeTask(this));

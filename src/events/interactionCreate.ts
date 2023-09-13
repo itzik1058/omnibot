@@ -1,4 +1,9 @@
-import { ChatInputCommandInteraction, Events, Interaction } from "discord.js";
+import {
+  AutocompleteInteraction,
+  ChatInputCommandInteraction,
+  Events,
+  Interaction,
+} from "discord.js";
 import DiscordEvent from "../core/event.js";
 
 export default class InteractionCreate extends DiscordEvent<Events.InteractionCreate> {
@@ -20,6 +25,12 @@ export default class InteractionCreate extends DiscordEvent<Events.InteractionCr
           });
         }
       }
+    } else if (interaction.isAutocomplete()) {
+      try {
+        await this.handleAutocompleteInteraction(interaction);
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       console.error("unhandled interaction");
     }
@@ -31,5 +42,16 @@ export default class InteractionCreate extends DiscordEvent<Events.InteractionCr
     const command = this.omnibot.commands.get(interaction.commandName);
     if (!command) throw Error(`unhandled command ${interaction.commandName}`);
     await command.execute(interaction);
+  }
+
+  private async handleAutocompleteInteraction(
+    interaction: AutocompleteInteraction
+  ) {
+    const command = this.omnibot.commands.get(interaction.commandName);
+    if (!command)
+      throw Error(
+        `unhandled autocomplete for command ${interaction.commandName}`
+      );
+    await command.autocomplete(interaction);
   }
 }
