@@ -22,6 +22,4 @@ const client = new Client({
   ],
 });
 const omnibot = new Omnibot(client);
-omnibot.login(config.token).catch((reason) => {
-  console.error(reason);
-});
+await omnibot.login(config.token);
