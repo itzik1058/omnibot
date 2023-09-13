@@ -7,6 +7,6 @@ export default class MimicTask extends ErlangScheduledOmnibotTask {
   }
 
   execute() {
-    console.log("MimicTask execute");
+    console.info("MimicTask execute");
   }
 }

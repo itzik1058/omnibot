@@ -12,7 +12,7 @@ export default class Omnibot {
   public commands: Collection<string, DiscordSlashCommand>;
   public tasks: Collection<string, OmnibotTask>;
 
-  private readonly client: Client;
+  public readonly client: Client;
 
   public constructor(client: Client) {
     this.client = client;

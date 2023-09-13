@@ -4,7 +4,7 @@ import DiscordEvent from "../core/event.js";
 
 export default class ClientReady extends DiscordEvent<Events.ClientReady> {
   async execute(client: Client<true>) {
-    console.log(`Ready! Logged in as ${client.user.tag}`);
+    console.info(`Ready! Logged in as ${client.user.tag}`);
 
     const rest = new REST().setToken(client.token);
     await rest.put(
