@@ -28,7 +28,9 @@ export abstract class ErlangScheduledOmnibotTask extends OmnibotTask {
 
   protected schedule() {
     const execute = this.execute.bind(this);
-    const delay = randomErlang(10, this.scale) / 10;
+    // divide variance by e^3 for more stable results
+    const varianceDivider = Math.pow(Math.E, 3);
+    const delay = randomErlang(varianceDivider, this.scale / varianceDivider);
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       new Promise((resolve) => {
