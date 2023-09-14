@@ -7,8 +7,8 @@ import {
 import DiscordSlashCommand from "../core/command.js";
 import MimicTask from "../tasks/mimic.js";
 
-export class MimicCommand extends DiscordSlashCommand {
-  json() {
+export default class MimicCommand extends DiscordSlashCommand {
+  builder() {
     return new SlashCommandBuilder()
       .setName("mimic")
       .setDescription("Mimic")

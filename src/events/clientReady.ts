@@ -10,7 +10,7 @@ export default class ClientReady extends DiscordEvent<Events.ClientReady> {
     await rest.put(
       Routes.applicationGuildCommands(config.clientId, config.guildId),
       {
-        body: this.omnibot.commands.map((value) => value.json()),
+        body: this.omnibot.commands.map((value) => value.builder()),
       }
     );
 

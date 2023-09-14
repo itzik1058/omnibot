@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import DiscordSlashCommand from "../core/command.js";
 
 export default class MemeCommand extends DiscordSlashCommand {
-  json() {
+  builder() {
     return new SlashCommandBuilder()
       .setName("meme")
       .setDescription("Meme")

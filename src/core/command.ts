@@ -19,6 +19,6 @@ export default abstract class DiscordSlashCommand {
     );
   }
 
-  abstract json(): RESTPostAPIChatInputApplicationCommandsJSONBody;
+  abstract builder(): RESTPostAPIChatInputApplicationCommandsJSONBody;
   abstract execute(interaction: ChatInputCommandInteraction): Awaitable<void>;
 }
