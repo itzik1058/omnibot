@@ -48,7 +48,7 @@ export class MimicCommand extends DiscordSlashCommand {
       case "path":
         {
           const pattern = new RegExp(
-            focused.value.toLowerCase().split("").join(".*?")
+            Array.from(focused.value.toLowerCase()).join(".*?")
           );
           const mimicTask = this.omnibot.tasks.get("mimic") as MimicTask;
           const options = mimicTask
