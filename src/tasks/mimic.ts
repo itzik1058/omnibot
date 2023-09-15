@@ -17,7 +17,7 @@ export default class MimicTask extends ErlangScheduledOmnibotTask {
   private queue: Array<string>;
 
   constructor(omnibot: Omnibot) {
-    super(omnibot, 1 * 60 * 60 * 1000); // 1 hour
+    super(omnibot, 2 * 60 * 60 * 1000); // 1 hour
 
     this.audio = [];
     this.queue = [];
@@ -26,8 +26,11 @@ export default class MimicTask extends ErlangScheduledOmnibotTask {
   async setup() {
     super.setup();
 
-    const audio = await glob(path.join(config.dataPath, "audio/**/*.*"));
-    this.audio = [...audio].map((resource) =>
+    const mimic = await glob(path.join(config.dataPath, "audio/mimic/**/*.*"));
+    const terraria = await glob(
+      path.join(config.dataPath, "audio/terraria/**/*.*")
+    );
+    this.audio = [...mimic, ...terraria].map((resource) =>
       path.relative(config.dataPath, resource)
     );
   }
