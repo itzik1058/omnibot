@@ -4,4 +4,5 @@ services:
     container_name: omnibot
     build:
       context: .
+    env_file: .env
     restart: unless-stopped
