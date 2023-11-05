@@ -13,13 +13,13 @@ export abstract class OmnibotTask {
   abstract execute(): Awaitable<void>;
 }
 
-export abstract class ErlangScheduledOmnibotTask extends OmnibotTask {
+export abstract class ScheduledOmnibotTask extends OmnibotTask {
   protected timeout?: NodeJS.Timeout;
-  private scale: number;
+  protected delay: number;
 
-  constructor(omnibot: Omnibot, scale: number) {
+  constructor(omnibot: Omnibot, delay: number) {
     super(omnibot);
-    this.scale = scale;
+    this.delay = delay;
   }
 
   setup() {
@@ -28,9 +28,6 @@ export abstract class ErlangScheduledOmnibotTask extends OmnibotTask {
 
   protected schedule() {
     const execute = this.execute.bind(this);
-    // divide variance by e^3 for more stable results
-    const varianceDivider = Math.pow(Math.E, 3);
-    const delay = randomErlang(varianceDivider, this.scale / varianceDivider);
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       new Promise((resolve) => {
@@ -39,6 +36,22 @@ export abstract class ErlangScheduledOmnibotTask extends OmnibotTask {
         console.error(reason);
       });
       this.schedule();
-    }, delay);
+    }, this.delay);
+  }
+}
+
+export abstract class ErlangScheduledOmnibotTask extends ScheduledOmnibotTask {
+  private scale: number;
+
+  constructor(omnibot: Omnibot, scale: number) {
+    super(omnibot, Infinity);
+    this.scale = scale;
+  }
+
+  protected schedule() {
+    // divide variance by e^3 for stable results
+    const varianceDivider = Math.pow(Math.E, 3);
+    this.delay = randomErlang(varianceDivider, this.scale / varianceDivider);
+    super.schedule();
   }
 }

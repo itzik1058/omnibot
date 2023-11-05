@@ -3,6 +3,7 @@ import MemeCommand from "../commands/meme.js";
 import MimicCommand from "../commands/mimic.js";
 import ClientReady from "../events/clientReady.js";
 import InteractionCreate from "../events/interactionCreate.js";
+import FloridaManTask from "../tasks/floridaMan.js";
 import MemeTask from "../tasks/meme.js";
 import MimicTask from "../tasks/mimic.js";
 import DiscordSlashCommand from "./command.js";
@@ -25,6 +26,7 @@ export default class Omnibot {
     this.tasks = new Collection();
     this.tasks.set("meme", new MemeTask(this));
     this.tasks.set("mimic", new MimicTask(this));
+    this.tasks.set("floridaMan", new FloridaManTask(this));
 
     client.once(Events.ClientReady, (...args) =>
       new ClientReady(this).execute(...args)
