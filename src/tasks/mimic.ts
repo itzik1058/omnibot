@@ -17,7 +17,7 @@ export default class MimicTask extends ErlangScheduledOmnibotTask {
   private queue: Array<string>;
 
   constructor(omnibot: Omnibot) {
-    super(omnibot, 2 * 60 * 60 * 1000); // 1 hour
+    super(omnibot, 24 * 60 * 60 * 1000);
 
     this.audio = [];
     this.queue = [];

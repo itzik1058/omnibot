@@ -9,7 +9,7 @@ export default class MemeTask extends ErlangScheduledOmnibotTask {
   private queue: Array<string>;
 
   constructor(omnibot: Omnibot) {
-    super(omnibot, 12 * 60 * 60 * 1000); // 12 hours
+    super(omnibot, 7 * 24 * 60 * 60 * 1000);
 
     this.attachments = [];
     this.queue = [];
