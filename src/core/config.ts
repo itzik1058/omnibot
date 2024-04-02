@@ -8,6 +8,8 @@ const config = {
   dataPath: untildify(process.env.DATA_PATH ?? "/omnibot"),
   guildId: process.env.GUILD_ID || assert.fail("Missing GUILD_ID"),
   channelId: process.env.CHANNEL_ID || assert.fail("Missing CHANNEL_ID"),
+  geminiApiKey:
+    process.env.GEMINI_API_KEY || assert.fail("Missing GEMINI_API_KEY"),
 };
 
 export default config;

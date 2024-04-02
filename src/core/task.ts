@@ -32,7 +32,7 @@ export abstract class ScheduledOmnibotTask extends OmnibotTask {
     this.timeout = setTimeout(() => {
       new Promise((resolve) => {
         resolve(execute());
-      }).catch((reason) => {
+      }).catch((reason: unknown) => {
         console.error(reason);
       });
       this.schedule();

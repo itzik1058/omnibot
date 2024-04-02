@@ -4,7 +4,7 @@ import config from "./core/config.js";
 import Omnibot from "./core/omnibot.js";
 
 process.on("uncaughtException", (error: Error) => {
-  console.error(`Uncaught exception: ${error.stack}`);
+  console.error(`Uncaught exception: ${error.stack ?? error.message}`);
 });
 
 console.info(generateDependencyReport());
@@ -21,7 +21,7 @@ const client = new Client({
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.DirectMessageReactions,
     GatewayIntentBits.DirectMessageTyping,
-    // GatewayIntentBits.MessageContent,
+    GatewayIntentBits.MessageContent,
   ],
 });
 const omnibot = new Omnibot(client);
