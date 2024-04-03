@@ -1,7 +1,7 @@
 import { generateDependencyReport } from "@discordjs/voice";
 import { Client, GatewayIntentBits } from "discord.js";
-import config from "./core/config.js";
-import Omnibot from "./core/omnibot.js";
+import config from "./config.js";
+import Omnibot from "./omnibot.js";
 
 process.on("uncaughtException", (error: Error) => {
   console.error(`Uncaught exception: ${error.stack ?? error.message}`);

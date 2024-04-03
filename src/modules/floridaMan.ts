@@ -1,9 +1,9 @@
 import { Events } from "discord.js";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import config from "../core/config.js";
-import { OmnibotModule } from "../core/module.js";
-import Omnibot from "../core/omnibot.js";
+import config from "../config.js";
+import { OmnibotModule } from "../module.js";
+import Omnibot from "../omnibot.js";
 
 interface FloridaManRawEntry {
   post_id: string;

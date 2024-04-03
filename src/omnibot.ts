@@ -1,11 +1,11 @@
 import { Client, Collection, Events, REST, Routes } from "discord.js";
-import Echo from "../modules/echo.js";
-import FloridaMan from "../modules/floridaMan.js";
-import Gemini from "../modules/gemini.js";
-import Meme from "../modules/meme.js";
-import Mimic from "../modules/mimic.js";
 import config from "./config.js";
 import { OmnibotModule } from "./module.js";
+import Echo from "./modules/echo.js";
+import FloridaMan from "./modules/floridaMan.js";
+import Gemini from "./modules/gemini.js";
+import Meme from "./modules/meme.js";
+import Mimic from "./modules/mimic.js";
 
 export default class Omnibot {
   public modules: Collection<string, OmnibotModule>;

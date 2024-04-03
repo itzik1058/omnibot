@@ -6,9 +6,9 @@ import {
   HarmCategory,
 } from "@google/generative-ai";
 import { Client, Events, Message, MessageType } from "discord.js";
-import config from "../core/config.js";
-import { OmnibotModule } from "../core/module.js";
-import Omnibot from "../core/omnibot.js";
+import config from "../config.js";
+import { OmnibotModule } from "../module.js";
+import Omnibot from "../omnibot.js";
 
 export default class Gemini extends OmnibotModule {
   public gemini: GenerativeModel;

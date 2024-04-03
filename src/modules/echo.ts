@@ -4,9 +4,9 @@ import {
   RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
 } from "discord.js";
-import config from "../core/config.js";
-import { OmnibotModule } from "../core/module.js";
-import Omnibot from "../core/omnibot.js";
+import config from "../config.js";
+import { OmnibotModule } from "../module.js";
+import Omnibot from "../omnibot.js";
 
 export default class Echo extends OmnibotModule {
   constructor(omnibot: Omnibot) {

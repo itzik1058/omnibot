@@ -6,10 +6,10 @@ import {
 } from "discord.js";
 import { glob } from "glob";
 import path from "node:path";
-import config from "../core/config.js";
-import { OmnibotModule } from "../core/module.js";
-import Omnibot from "../core/omnibot.js";
-import { ErlangScheduledTask } from "../core/task.js";
+import config from "../config.js";
+import { OmnibotModule } from "../module.js";
+import Omnibot from "../omnibot.js";
+import { ErlangScheduledTask } from "../task.js";
 
 export default class Meme extends OmnibotModule {
   private attachments: Array<string>;
