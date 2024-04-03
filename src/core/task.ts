@@ -1,37 +1,26 @@
-import { Awaitable } from "discord.js";
-import Omnibot from "./omnibot.js";
 import { randomErlang } from "./utils.js";
 
-export abstract class OmnibotTask {
-  protected omnibot: Omnibot;
+type CallbackType = () => void | PromiseLike<void>;
 
-  constructor(omnibot: Omnibot) {
-    this.omnibot = omnibot;
-  }
-
-  abstract setup(): Awaitable<void>;
-  abstract execute(): Awaitable<void>;
-}
-
-export abstract class ScheduledOmnibotTask extends OmnibotTask {
-  protected timeout?: NodeJS.Timeout;
+export class ScheduledTask {
+  protected callback: CallbackType;
   protected delay: number;
+  protected timeout?: NodeJS.Timeout;
 
-  constructor(omnibot: Omnibot, delay: number) {
-    super(omnibot);
+  constructor(callback: CallbackType, delay: number) {
+    this.callback = callback;
     this.delay = delay;
   }
 
-  setup() {
+  public start() {
     this.schedule();
   }
 
   protected schedule() {
-    const execute = this.execute.bind(this);
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       new Promise((resolve) => {
-        resolve(execute());
+        resolve(this.callback());
       }).catch((reason: unknown) => {
         console.error(reason);
       });
@@ -40,11 +29,11 @@ export abstract class ScheduledOmnibotTask extends OmnibotTask {
   }
 }
 
-export abstract class ErlangScheduledOmnibotTask extends ScheduledOmnibotTask {
+export class ErlangScheduledTask extends ScheduledTask {
   private scale: number;
 
-  constructor(omnibot: Omnibot, scale: number) {
-    super(omnibot, Infinity);
+  constructor(callback: CallbackType, scale: number) {
+    super(callback, Infinity);
     this.scale = scale;
   }
 

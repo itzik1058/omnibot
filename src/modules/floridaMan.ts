@@ -1,8 +1,9 @@
+import { Events } from "discord.js";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import config from "../core/config.js";
+import { OmnibotModule } from "../core/module.js";
 import Omnibot from "../core/omnibot.js";
-import { ScheduledOmnibotTask } from "../core/task.js";
 
 interface FloridaManRawEntry {
   post_id: string;
@@ -22,17 +23,18 @@ interface FloridaManEntry {
   url: string;
 }
 
-export default class FloridaManTask extends ScheduledOmnibotTask {
+export default class FloridaMan extends OmnibotModule {
   private data: Array<FloridaManEntry>;
 
   constructor(omnibot: Omnibot) {
-    super(omnibot, 24 * 60 * 60 * 1000); // every day
+    super(omnibot);
 
     this.data = [];
+
+    omnibot.client.on(Events.ClientReady, this.onClientReady);
   }
 
-  setup() {
-    super.setup();
+  private onClientReady = () => {
     const rawData = JSON.parse(
       readFileSync(
         path.join(config.dataPath, "attachments/florida_man.json"),
@@ -47,9 +49,9 @@ export default class FloridaManTask extends ScheduledOmnibotTask {
       posted_by: entry.posted_by,
       url: entry.url,
     }));
-  }
+  };
 
-  async execute() {
+  async sendFloridaMan() {
     const entries = this.data.filter((entry) => {
       const now = new Date();
       return (
@@ -57,13 +59,15 @@ export default class FloridaManTask extends ScheduledOmnibotTask {
         entry.created_at.getMonth() == now.getMonth()
       );
     });
+
     if (entries.length == 0) {
-      console.info(`FloridaManTask no entry found for today`);
+      console.info(`sendFloridaMan no entry found for today`);
       return;
     }
+
     const entry = entries[Math.floor(Math.random() * entries.length)];
     const channel = this.omnibot.client.channels.cache.get(config.channelId);
-    if (channel?.isTextBased()) await channel.send({ content: `${entry.url}` });
-    console.info(`FloridaManTask with entry ${entry.post_id}`);
+    if (channel?.isTextBased()) await channel.send({ content: entry.url });
+    console.info(`sendFloridaMan with entry ${entry.post_id}`);
   }
 }

@@ -1,60 +1,46 @@
-import {
-  ChatSession,
-  GenerativeModel,
-  GoogleGenerativeAI,
-} from "@google/generative-ai";
-import { Client, Collection, Events } from "discord.js";
-import EchoCommand from "../commands/echo.js";
-import MemeCommand from "../commands/meme.js";
-import MimicCommand from "../commands/mimic.js";
-import ClientReady from "../events/clientReady.js";
-import InteractionCreate from "../events/interactionCreate.js";
-import MessageCreate from "../events/messageCreate.js";
-import FloridaManTask from "../tasks/floridaMan.js";
-import MemeTask from "../tasks/meme.js";
-import MimicTask from "../tasks/mimic.js";
-import DiscordSlashCommand from "./command.js";
+import { Client, Collection, Events, REST, Routes } from "discord.js";
+import Echo from "../modules/echo.js";
+import FloridaMan from "../modules/floridaMan.js";
+import Gemini from "../modules/gemini.js";
+import Meme from "../modules/meme.js";
+import Mimic from "../modules/mimic.js";
 import config from "./config.js";
-import { OmnibotTask } from "./task.js";
+import { OmnibotModule } from "./module.js";
 
 export default class Omnibot {
-  public commands: Collection<string, DiscordSlashCommand>;
-  public tasks: Collection<string, OmnibotTask>;
-  public gemini: GenerativeModel;
-  public chat?: ChatSession;
+  public modules: Collection<string, OmnibotModule>;
 
   public readonly client: Client;
 
   public constructor(client: Client) {
     this.client = client;
-    this.commands = new Collection(
-      [
-        new MemeCommand(this),
-        new MimicCommand(this),
-        new EchoCommand(this),
-      ].map((command) => [command.builder().name, command])
-    );
-    this.tasks = new Collection();
-    this.tasks.set("meme", new MemeTask(this));
-    this.tasks.set("mimic", new MimicTask(this));
-    this.tasks.set("floridaMan", new FloridaManTask(this));
+    this.modules = new Collection();
+    this.modules.set("echo", new Echo(this));
+    this.modules.set("meme", new Meme(this));
+    this.modules.set("mimic", new Mimic(this));
+    this.modules.set("floridaMan", new FloridaMan(this));
+    this.modules.set("gemini", new Gemini(this));
 
-    this.gemini = new GoogleGenerativeAI(
-      config.geminiApiKey
-    ).getGenerativeModel({ model: "gemini-1.0-pro" });
-
-    client.once(Events.ClientReady, (...args) =>
-      new ClientReady(this).execute(...args)
-    );
-    client.on(Events.InteractionCreate, (...args) =>
-      new InteractionCreate(this).execute(...args)
-    );
-    client.on(Events.MessageCreate, (...args) =>
-      new MessageCreate(this).execute(...args)
-    );
+    client.once(Events.ClientReady, this.onClientReady);
   }
 
   async login(token?: string) {
     await this.client.login(token);
   }
+
+  onClientReady = async (client: Client<true>) => {
+    console.info(`Ready! Logged in as ${client.user.tag}`);
+
+    const commands = this.modules.map((module) => module.commands()).flat();
+    const rest = new REST().setToken(client.token);
+    await rest.put(
+      Routes.applicationGuildCommands(config.clientId, config.guildId),
+      {
+        body: commands,
+      }
+    );
+
+    const commandNames = commands.map((command) => command.name).join(", ");
+    console.info(`registered command handlers for ${commandNames}`);
+  };
 }
