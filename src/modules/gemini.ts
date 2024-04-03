@@ -46,7 +46,7 @@ export default class Gemini extends OmnibotModule {
         },
       ],
       generationConfig: {
-        maxOutputTokens: 2000,
+        maxOutputTokens: 1900,
       },
       history: [
         {
