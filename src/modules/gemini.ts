@@ -45,6 +45,9 @@ export default class Gemini extends OmnibotModule {
           threshold: HarmBlockThreshold.BLOCK_NONE,
         },
       ],
+      generationConfig: {
+        maxOutputTokens: 2000,
+      },
       history: [
         {
           role: "user",
