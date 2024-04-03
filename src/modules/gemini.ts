@@ -46,7 +46,7 @@ export default class Gemini extends OmnibotModule {
         },
       ],
       generationConfig: {
-        maxOutputTokens: 1900,
+        maxOutputTokens: 1000,
       },
       history: [
         {
@@ -79,8 +79,11 @@ export default class Gemini extends OmnibotModule {
       return;
 
     const request = `${message.member?.displayName}: ${message.content}`;
-    console.info(request);
+    console.info(`Gemini request: ${request}`);
     const result = await this.chat.sendMessage(request);
-    await message.reply(result.response.text());
+    const text = result.response.text();
+    console.info(`Gemini response: ${text}`);
+
+    await message.reply(text);
   };
 }
