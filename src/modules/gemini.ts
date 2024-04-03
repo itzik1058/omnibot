@@ -80,10 +80,25 @@ export default class Gemini extends OmnibotModule {
 
     const request = `${message.member?.displayName}: ${message.content}`;
     console.info(`Gemini request: ${request}`);
-    const result = await this.chat.sendMessage(request);
-    const text = result.response.text();
-    console.info(`Gemini response: ${text}`);
+    try {
+      const result = await this.chat.sendMessage(request);
+      const response = result.response;
+      const blockReason = response.promptFeedback?.blockReason;
+      const blockReasonMessage = response.promptFeedback?.blockReasonMessage;
+      if (blockReason) {
+        console.warn(blockReason);
+        if (blockReasonMessage) {
+          console.warn(blockReasonMessage);
+          await message.reply(blockReasonMessage);
+        }
+      }
+      const text = response.text();
+      console.info(`Gemini response: ${text}`);
 
-    await message.reply(text);
+      await message.reply(text);
+    } catch (error) {
+      console.error(error);
+      await message.reply(error as string);
+    }
   };
 }
