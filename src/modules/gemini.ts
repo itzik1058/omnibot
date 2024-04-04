@@ -70,6 +70,10 @@ export default class Gemini extends OmnibotModule {
     ];
   }
 
+  private resetChat() {
+    this.chat = this.gemini.startChat({ history: [...this.history] });
+  }
+
   private onClientReady = (client: Client<true>) => {
     this.history = [
       {
@@ -85,12 +89,12 @@ export default class Gemini extends OmnibotModule {
       },
       { role: "model", parts: [{ text: "Understood" }] },
     ];
-    this.chat = this.gemini.startChat({ history: [...this.history] });
+    this.resetChat();
   };
 
   private onInteractionCreate = (interaction: Interaction) => {
     if (interaction.isChatInputCommand() && interaction.commandName == "reset")
-      this.chat = this.gemini.startChat({ history: [...this.history] });
+      this.resetChat();
   };
 
   private onMessageCreate = async (message: Message) => {
@@ -127,6 +131,7 @@ export default class Gemini extends OmnibotModule {
       }
     } catch (e) {
       console.error(e);
+      this.resetChat();
     }
   };
 }
