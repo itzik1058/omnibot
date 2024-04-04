@@ -4,15 +4,25 @@ import {
   GoogleGenerativeAI,
   HarmBlockThreshold,
   HarmCategory,
+  StartChatParams,
 } from "@google/generative-ai";
-import { Client, Events, Message, MessageType } from "discord.js";
+import {
+  Client,
+  Events,
+  Interaction,
+  Message,
+  MessageType,
+  RESTPostAPIChatInputApplicationCommandsJSONBody,
+  SlashCommandBuilder,
+} from "discord.js";
 import config from "../config.js";
 import { OmnibotModule } from "../module.js";
 import Omnibot from "../omnibot.js";
 
 export default class Gemini extends OmnibotModule {
-  public gemini: GenerativeModel;
-  public chat?: ChatSession;
+  private gemini: GenerativeModel;
+  private startChatParams?: StartChatParams;
+  private chat?: ChatSession;
 
   constructor(omnibot: Omnibot) {
     super(omnibot);
@@ -22,11 +32,22 @@ export default class Gemini extends OmnibotModule {
     ).getGenerativeModel({ model: "gemini-1.0-pro" });
 
     omnibot.client.once(Events.ClientReady, this.onClientReady);
+    omnibot.client.on(Events.InteractionCreate, this.onInteractionCreate);
     omnibot.client.on(Events.MessageCreate, this.onMessageCreate);
   }
 
+  public commands(): RESTPostAPIChatInputApplicationCommandsJSONBody[] {
+    return [
+      new SlashCommandBuilder()
+        .setName("reset")
+        .setDescription("Reset chat")
+        .setDMPermission(false)
+        .toJSON(),
+    ];
+  }
+
   private onClientReady = (client: Client<true>) => {
-    this.chat = this.gemini.startChat({
+    this.startChatParams = {
       safetySettings: [
         {
           category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -53,16 +74,22 @@ export default class Gemini extends OmnibotModule {
           role: "user",
           parts: [
             {
-              text: `System Prompt: You are a discord bot whose tag is ${client.user.tag}.`,
-            },
-            {
-              text: "The messages you receive will be prefixed by the user's display name.",
+              text: `
+              System Prompt: You are a discord bot whose tag is ${client.user.tag}.
+              The messages you receive will be prefixed by the user's display name.
+              `,
             },
           ],
         },
         { role: "model", parts: [{ text: "Understood" }] },
       ],
-    });
+    };
+    this.chat = this.gemini.startChat(this.startChatParams);
+  };
+
+  private onInteractionCreate = (interaction: Interaction) => {
+    if (interaction.isChatInputCommand() && interaction.commandName == "reset")
+      this.chat = this.gemini.startChat(this.startChatParams);
   };
 
   private onMessageCreate = async (message: Message) => {
@@ -96,9 +123,9 @@ export default class Gemini extends OmnibotModule {
       console.info(`Gemini response: ${text}`);
 
       await message.reply(text);
-    } catch (error) {
-      console.error(error);
-      await message.reply(error as string);
+    } catch (e) {
+      console.error(e);
+      if (e instanceof Error) await message.reply(e.message);
     }
   };
 }
