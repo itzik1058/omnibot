@@ -117,6 +117,8 @@ export default class Gemini extends OmnibotModule {
         if (blockReasonMessage) {
           console.warn(blockReasonMessage);
           await message.reply(blockReasonMessage);
+        } else {
+          await message.reply(`Request blocked due to ${blockReason}`);
         }
       } else {
         const text = response.text();
