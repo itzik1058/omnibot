@@ -1,10 +1,10 @@
 import {
   ChatSession,
+  Content,
   GenerativeModel,
   GoogleGenerativeAI,
   HarmBlockThreshold,
   HarmCategory,
-  StartChatParams,
 } from "@google/generative-ai";
 import {
   Client,
@@ -21,7 +21,7 @@ import Omnibot from "../omnibot.js";
 
 export default class Gemini extends OmnibotModule {
   private gemini: GenerativeModel;
-  private startChatParams?: StartChatParams;
+  private history: Content[];
   private chat?: ChatSession;
 
   constructor(omnibot: Omnibot) {
@@ -29,25 +29,8 @@ export default class Gemini extends OmnibotModule {
 
     this.gemini = new GoogleGenerativeAI(
       config.geminiApiKey
-    ).getGenerativeModel({ model: "gemini-1.0-pro" });
-
-    omnibot.client.once(Events.ClientReady, this.onClientReady);
-    omnibot.client.on(Events.InteractionCreate, this.onInteractionCreate);
-    omnibot.client.on(Events.MessageCreate, this.onMessageCreate);
-  }
-
-  public commands(): RESTPostAPIChatInputApplicationCommandsJSONBody[] {
-    return [
-      new SlashCommandBuilder()
-        .setName("reset")
-        .setDescription("Reset chat")
-        .setDMPermission(false)
-        .toJSON(),
-    ];
-  }
-
-  private onClientReady = (client: Client<true>) => {
-    this.startChatParams = {
+    ).getGenerativeModel({
+      model: "gemini-1.0-pro",
       safetySettings: [
         {
           category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -69,27 +52,45 @@ export default class Gemini extends OmnibotModule {
       generationConfig: {
         maxOutputTokens: 1000,
       },
-      history: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: `
+    });
+    this.history = [];
+
+    omnibot.client.once(Events.ClientReady, this.onClientReady);
+    omnibot.client.on(Events.InteractionCreate, this.onInteractionCreate);
+    omnibot.client.on(Events.MessageCreate, this.onMessageCreate);
+  }
+
+  public commands(): RESTPostAPIChatInputApplicationCommandsJSONBody[] {
+    return [
+      new SlashCommandBuilder()
+        .setName("reset")
+        .setDescription("Reset chat")
+        .setDMPermission(false)
+        .toJSON(),
+    ];
+  }
+
+  private onClientReady = (client: Client<true>) => {
+    this.history = [
+      {
+        role: "user",
+        parts: [
+          {
+            text: `
               System Prompt: You are a discord bot whose tag is ${client.user.tag}.
               The messages you receive will be prefixed by the user's display name.
               `,
-            },
-          ],
-        },
-        { role: "model", parts: [{ text: "Understood" }] },
-      ],
-    };
-    this.chat = this.gemini.startChat(this.startChatParams);
+          },
+        ],
+      },
+      { role: "model", parts: [{ text: "Understood" }] },
+    ];
+    this.chat = this.gemini.startChat({ history: [...this.history] });
   };
 
   private onInteractionCreate = (interaction: Interaction) => {
     if (interaction.isChatInputCommand() && interaction.commandName == "reset")
-      this.chat = this.gemini.startChat(this.startChatParams);
+      this.chat = this.gemini.startChat({ history: [...this.history] });
   };
 
   private onMessageCreate = async (message: Message) => {
@@ -113,19 +114,17 @@ export default class Gemini extends OmnibotModule {
       const blockReason = response.promptFeedback?.blockReason;
       const blockReasonMessage = response.promptFeedback?.blockReasonMessage;
       if (blockReason) {
-        console.warn(blockReason);
         if (blockReasonMessage) {
           console.warn(blockReasonMessage);
           await message.reply(blockReasonMessage);
         }
+      } else {
+        const text = response.text();
+        console.info(`Gemini response: ${text}`);
+        await message.reply(text);
       }
-      const text = response.text();
-      console.info(`Gemini response: ${text}`);
-
-      await message.reply(text);
     } catch (e) {
       console.error(e);
-      if (e instanceof Error) await message.reply(e.message);
     }
   };
 }
