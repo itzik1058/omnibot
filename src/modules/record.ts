@@ -10,7 +10,9 @@ import {
   RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
 } from "discord.js";
+import Ffmpeg from "fluent-ffmpeg";
 import { opus } from "prism-media";
+import { PassThrough } from "stream";
 import { OmnibotModule } from "../module.js";
 import Omnibot from "../omnibot.js";
 
@@ -94,7 +96,7 @@ export default class Record extends OmnibotModule {
       const decoder = new opus.Decoder({
         frameSize: 960,
         channels: 2,
-        rate: 48000,
+        rate: 48_000,
       });
       const stream = connection.receiver
         .subscribe(member.id, streamOptions)
@@ -117,11 +119,19 @@ export default class Record extends OmnibotModule {
             .catch(console.error);
         })
         .pipe(decoder);
+      const audio = new PassThrough();
+      Ffmpeg()
+        .input(stream)
+        .inputFormat("s32le")
+        .audioBitrate(48_000)
+        .audioChannels(2)
+        .format("mp3")
+        .writeToStream(audio);
       await interaction.followUp({
         files: [
           {
-            attachment: stream,
-            name: `${Date.now()}-${member.displayName}.pcm`,
+            attachment: audio,
+            name: `${Date.now()}-${member.displayName}.mp3`,
           },
         ],
         ephemeral: true,
