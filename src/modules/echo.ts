@@ -29,7 +29,7 @@ export default class Echo extends OmnibotModule {
   }
 
   private onInteractionCreate = async (interaction: Interaction) => {
-    if (interaction.isChatInputCommand()) {
+    if (interaction.isChatInputCommand() && interaction.commandName == "echo") {
       await interaction.deferReply();
       await interaction.deleteReply();
       const content = interaction.options.getString("content");

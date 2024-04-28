@@ -1,4 +1,8 @@
-import { EndBehaviorType, joinVoiceChannel } from "@discordjs/voice";
+import {
+  AudioReceiveStreamOptions,
+  EndBehaviorType,
+  joinVoiceChannel,
+} from "@discordjs/voice";
 import {
   Events,
   GuildMember,
@@ -6,8 +10,9 @@ import {
   RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
 } from "discord.js";
-import { OmnibotModule } from "../module";
-import Omnibot from "../omnibot";
+import { opus } from "prism-media";
+import { OmnibotModule } from "../module.js";
+import Omnibot from "../omnibot.js";
 
 export default class Record extends OmnibotModule {
   constructor(omnibot: Omnibot) {
@@ -22,21 +27,52 @@ export default class Record extends OmnibotModule {
         .setName("record")
         .setDescription("Record conversation")
         .setDMPermission(false)
+        .addUserOption((option) =>
+          option
+            .setName("user")
+            .setDescription("User to record")
+            .setRequired(true)
+        )
+        .addIntegerOption((option) =>
+          option
+            .setName("stop-silence-duration")
+            .setDescription(
+              "Silence duration (ms) after which recording will stop"
+            )
+            .setMinValue(0)
+            .setMaxValue(25000)
+        )
         .toJSON(),
     ];
   }
 
   private onInteractionCreate = async (interaction: Interaction) => {
-    if (interaction.isChatInputCommand()) {
-      const member = interaction.member as GuildMember;
-      const channel = member.voice.channel;
-      if (!channel) {
+    if (
+      interaction.isChatInputCommand() &&
+      interaction.commandName == "record"
+    ) {
+      const targetUser = interaction.options.getMember("user");
+      const afterSilenceDuration = interaction.options.getInteger(
+        "stop-silence-duration"
+      );
+      if (!targetUser) {
         await interaction.reply({
-          content: "You must be connected to a voice channel",
+          content: "User was not found",
           ephemeral: true,
         });
         return;
       }
+      const member = targetUser as GuildMember;
+      const channel = member.voice.channel;
+      if (!channel) {
+        await interaction.reply({
+          content: "User must be connected to a voice channel",
+          ephemeral: true,
+        });
+        return;
+      }
+      await interaction.deferReply();
+      await interaction.deleteReply();
       const connection = joinVoiceChannel({
         guildId: channel.guildId,
         channelId: channel.id,
@@ -44,34 +80,52 @@ export default class Record extends OmnibotModule {
         selfDeaf: false,
         selfMute: true,
       });
-      connection.receiver
-        .subscribe(member.user.id, {
-          end: { behavior: EndBehaviorType.AfterSilence, duration: 1000 },
-        })
-        .on("readable", () => {
+      const streamOptions: Partial<AudioReceiveStreamOptions> = {};
+      if (afterSilenceDuration)
+        streamOptions.end = {
+          behavior: EndBehaviorType.AfterSilence,
+          duration: afterSilenceDuration,
+        };
+      else
+        streamOptions.end = {
+          behavior: EndBehaviorType.AfterSilence,
+          duration: 300, // default 300 ms
+        };
+      const decoder = new opus.Decoder({
+        frameSize: 960,
+        channels: 2,
+        rate: 48000,
+      });
+      const stream = connection.receiver
+        .subscribe(member.id, streamOptions)
+        .on("error", console.error)
+        .once("readable", () => {
           interaction
-            .reply({
+            .followUp({
               content: "Recording started",
               ephemeral: true,
             })
-            .catch((reason) => {
-              console.error(reason);
-            });
+            .catch(console.error);
         })
-        .on("close", () => {
+        .once("close", () => {
           connection.destroy();
           interaction
             .followUp({
               content: "Recording ended",
               ephemeral: true,
             })
-            .catch((reason) => {
-              console.error(reason);
-            });
+            .catch(console.error);
         })
-        .on("data", (chunk) => {
-          console.info(chunk);
-        });
+        .pipe(decoder);
+      await interaction.followUp({
+        files: [
+          {
+            attachment: stream,
+            name: `${Date.now()}-${member.displayName}.pcm`,
+          },
+        ],
+        ephemeral: true,
+      });
     }
   };
 }
