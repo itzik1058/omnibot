@@ -10,11 +10,14 @@ import {
   RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
 } from "discord.js";
+import ffmpegPath from "ffmpeg-static";
 import Ffmpeg from "fluent-ffmpeg";
 import { opus } from "prism-media";
 import { PassThrough } from "stream";
 import { OmnibotModule } from "../module.js";
 import Omnibot from "../omnibot.js";
+
+if (ffmpegPath) Ffmpeg.setFfmpegPath(ffmpegPath);
 
 export default class Record extends OmnibotModule {
   constructor(omnibot: Omnibot) {
