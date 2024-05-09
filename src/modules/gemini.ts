@@ -111,9 +111,22 @@ export default class Gemini extends OmnibotModule {
       return;
 
     const request = `${message.member?.displayName}: ${message.content}`;
-    console.info(`Gemini request: ${request}`);
+    const parts = await Promise.all(
+      message.attachments.map(async (attachment) => {
+        const response = await fetch(attachment.url);
+        const buffer = await response.arrayBuffer();
+        const data = Buffer.from(buffer).toString("base64");
+        return {
+          inlineData: {
+            data: data,
+            mimeType: attachment.contentType ?? "text/plain",
+          },
+        };
+      })
+    );
+    console.info(`Gemini request: (${parts.length} attachments) ${request}`);
     try {
-      const result = await this.chat.sendMessage(request);
+      const result = await this.chat.sendMessage([request, ...parts]);
       const response = result.response;
       const blockReason = response.promptFeedback?.blockReason;
       const blockReasonMessage = response.promptFeedback?.blockReasonMessage;
@@ -132,6 +145,9 @@ export default class Gemini extends OmnibotModule {
     } catch (e) {
       console.error(e);
       this.resetChat();
+      if (e instanceof Error) {
+        await message.reply(e.message);
+      }
     }
   };
 }
