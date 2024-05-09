@@ -6,6 +6,7 @@ import FloridaMan from "./modules/floridaMan.js";
 import Gemini from "./modules/gemini.js";
 import Meme from "./modules/meme.js";
 import Mimic from "./modules/mimic.js";
+import PrntSc from "./modules/prntsc.js";
 import Record from "./modules/record.js";
 
 export default class Omnibot {
@@ -21,6 +22,7 @@ export default class Omnibot {
     this.modules.set("gemini", new Gemini(this));
     this.modules.set("meme", new Meme(this));
     this.modules.set("mimic", new Mimic(this));
+    this.modules.set("prntsc", new PrntSc(this));
     this.modules.set("record", new Record(this));
 
     client.once(Events.ClientReady, this.onClientReady);
