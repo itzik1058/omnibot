@@ -1,0 +1,14 @@
+services:
+  omnibot:
+    image: omnibot
+    container_name: omnibot
+    build:
+      context: .
+    environment:
+      CLIENT_ID: ${CLIENT_ID:?}
+      DISCORD_TOKEN: ${DISCORD_TOKEN:?}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:?}
+      DATA_PATH: ${DATA_PATH:?}
+      GUILD_ID: ${GUILD_ID:?}
+      CHANNEL_ID: ${CHANNEL_ID:?}
+    restart: unless-stopped
