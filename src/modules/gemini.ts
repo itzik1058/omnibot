@@ -30,7 +30,7 @@ export default class Gemini extends OmnibotModule {
     this.gemini = new GoogleGenerativeAI(
       config.geminiApiKey
     ).getGenerativeModel({
-      model: "gemini-1.0-pro",
+      model: "gemini-2.0-flash",
       safetySettings: [
         {
           category: HarmCategory.HARM_CATEGORY_HARASSMENT,
