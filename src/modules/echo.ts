@@ -34,7 +34,7 @@ export default class Echo extends OmnibotModule {
       await interaction.deleteReply();
       const content = interaction.options.getString("content");
       const channel = this.omnibot.client.channels.cache.get(config.channelId);
-      if (channel?.isTextBased() && content !== null)
+      if (channel?.isSendable() && content !== null)
         await channel.send({ content: content });
     }
   };

@@ -58,7 +58,7 @@ export default class Meme extends OmnibotModule {
     }
     const attachment = this.queue.pop() as string;
     const channel = this.omnibot.client.channels.cache.get(config.channelId);
-    if (channel?.isTextBased())
+    if (channel?.isSendable())
       await channel.send({
         files: [{ attachment: path.join(config.dataPath, attachment) }],
       });

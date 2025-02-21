@@ -67,7 +67,7 @@ export default class FloridaMan extends OmnibotModule {
 
     const entry = entries[Math.floor(Math.random() * entries.length)];
     const channel = this.omnibot.client.channels.cache.get(config.channelId);
-    if (channel?.isTextBased()) await channel.send({ content: entry.url });
+    if (channel?.isSendable()) await channel.send({ content: entry.url });
     console.info(`sendFloridaMan with entry ${entry.post_id}`);
   }
 }
