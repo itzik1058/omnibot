@@ -1,4 +1,5 @@
 import { Client, Collection, Events, REST, Routes } from "discord.js";
+
 import config from "./config.js";
 import { OmnibotModule } from "./module.js";
 import Echo from "./modules/echo.js";
@@ -25,7 +26,9 @@ export default class Omnibot {
     this.modules.set("prntsc", new PrntSc(this));
     this.modules.set("record", new Record(this));
 
-    client.once(Events.ClientReady, this.onClientReady);
+    client.once(Events.ClientReady, (client) => {
+      this.onClientReady(client).catch((e) => console.error(e));
+    });
   }
 
   async login(token?: string) {
@@ -41,7 +44,7 @@ export default class Omnibot {
       Routes.applicationGuildCommands(config.clientId, config.guildId),
       {
         body: commands,
-      }
+      },
     );
 
     const commandNames = commands.map((command) => command.name).join(", ");

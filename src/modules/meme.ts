@@ -1,11 +1,13 @@
+import path from "node:path";
+
 import {
   Events,
-  Interaction,
-  RESTPostAPIChatInputApplicationCommandsJSONBody,
+  type Interaction,
+  type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
 } from "discord.js";
 import { glob } from "glob";
-import path from "node:path";
+
 import config from "../config.js";
 import { OmnibotModule } from "../module.js";
 import Omnibot from "../omnibot.js";
@@ -23,11 +25,15 @@ export default class Meme extends OmnibotModule {
     this.queue = [];
     this.task = new ErlangScheduledTask(
       this.sendMeme.bind(this),
-      7 * 24 * 60 * 60 * 1000
+      7 * 24 * 60 * 60 * 1000,
     );
 
-    omnibot.client.once(Events.ClientReady, this.onClientReady);
-    omnibot.client.on(Events.InteractionCreate, this.onInteractionCreate);
+    omnibot.client.once(Events.ClientReady, () => {
+      this.onClientReady().catch((e) => console.error(e));
+    });
+    omnibot.client.on(Events.InteractionCreate, (interaction) => {
+      this.onInteractionCreate(interaction).catch((e) => console.error(e));
+    });
   }
 
   public commands(): RESTPostAPIChatInputApplicationCommandsJSONBody[] {
@@ -40,7 +46,7 @@ export default class Meme extends OmnibotModule {
     const fsd = await glob(path.join(config.dataPath, "attachments/fsd/*.*"));
     const sign = await glob(path.join(config.dataPath, "attachments/sign/*.*"));
     this.attachments = [...fsd, ...sign].map((attachment) =>
-      path.relative(config.dataPath, attachment)
+      path.relative(config.dataPath, attachment),
     );
     this.task.start();
   };

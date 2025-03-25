@@ -1,5 +1,6 @@
 import { generateDependencyReport } from "@discordjs/voice";
 import { Client, GatewayIntentBits } from "discord.js";
+
 import config from "./config.js";
 import Omnibot from "./omnibot.js";
 

@@ -1,6 +1,8 @@
-import { Events } from "discord.js";
 import { readFileSync } from "node:fs";
 import path from "node:path";
+
+import { Events } from "discord.js";
+
 import config from "../config.js";
 import { OmnibotModule } from "../module.js";
 import Omnibot from "../omnibot.js";

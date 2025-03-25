@@ -1,23 +1,15 @@
 {
+  "extends": [
+    "@tsconfig/node22/tsconfig.json",
+    "@tsconfig/node-ts/tsconfig.json"
+  ],
   "compilerOptions": {
-    "target": "ES2022",
-
-    "module": "ES2022",
-    "rootDir": "src",
-    "moduleResolution": "Node",
-
-    "sourceMap": true,
-    "outDir": "dist",
-
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-
-    "strict": true,
-    "noImplicitAny": true
+    "outDir": "dist"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"],
-  "ts-node": {
-    "esm": true
-  }
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
 }

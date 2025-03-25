@@ -1,9 +1,10 @@
 import {
   Events,
-  Interaction,
-  RESTPostAPIChatInputApplicationCommandsJSONBody,
+  type Interaction,
+  type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
 } from "discord.js";
+
 import { OmnibotModule } from "../module.js";
 import Omnibot from "../omnibot.js";
 
@@ -11,7 +12,9 @@ export default class PrntSc extends OmnibotModule {
   constructor(omnibot: Omnibot) {
     super(omnibot);
 
-    omnibot.client.on(Events.InteractionCreate, this.onInteractionCreate);
+    omnibot.client.on(Events.InteractionCreate, (interaction) => {
+      this.onInteractionCreate(interaction).catch((e) => console.error(e));
+    });
   }
 
   public commands(): RESTPostAPIChatInputApplicationCommandsJSONBody[] {

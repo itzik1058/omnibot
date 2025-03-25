@@ -1,29 +1,33 @@
 import {
-  AudioReceiveStreamOptions,
+  type AudioReceiveStreamOptions,
   EndBehaviorType,
   joinVoiceChannel,
 } from "@discordjs/voice";
 import {
   Events,
   GuildMember,
-  Interaction,
-  RESTPostAPIChatInputApplicationCommandsJSONBody,
+  type Interaction,
+  type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
 } from "discord.js";
-import ffmpegPath from "ffmpeg-static";
+import ffmpegStatic from "ffmpeg-static";
 import Ffmpeg from "fluent-ffmpeg";
 import { opus } from "prism-media";
 import { PassThrough } from "stream";
+
 import { OmnibotModule } from "../module.js";
 import Omnibot from "../omnibot.js";
 
-if (ffmpegPath) Ffmpeg.setFfmpegPath(ffmpegPath);
+const ffmpegStaticPath = ffmpegStatic.default;
+if (ffmpegStaticPath) Ffmpeg.setFfmpegPath(ffmpegStaticPath);
 
 export default class Record extends OmnibotModule {
   constructor(omnibot: Omnibot) {
     super(omnibot);
 
-    omnibot.client.on(Events.InteractionCreate, this.onInteractionCreate);
+    omnibot.client.on(Events.InteractionCreate, (interaction) => {
+      this.onInteractionCreate(interaction).catch((e) => console.error(e));
+    });
   }
 
   public commands(): RESTPostAPIChatInputApplicationCommandsJSONBody[] {
@@ -36,16 +40,16 @@ export default class Record extends OmnibotModule {
           option
             .setName("user")
             .setDescription("User to record")
-            .setRequired(true)
+            .setRequired(true),
         )
         .addIntegerOption((option) =>
           option
             .setName("stop-silence-duration")
             .setDescription(
-              "Silence duration (ms) after which recording will stop"
+              "Silence duration (ms) after which recording will stop",
             )
             .setMinValue(0)
-            .setMaxValue(25000)
+            .setMaxValue(25000),
         )
         .toJSON(),
     ];
@@ -58,7 +62,7 @@ export default class Record extends OmnibotModule {
     ) {
       const targetUser = interaction.options.getMember("user");
       const afterSilenceDuration = interaction.options.getInteger(
-        "stop-silence-duration"
+        "stop-silence-duration",
       );
       if (!targetUser) {
         await interaction.reply({

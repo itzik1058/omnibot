@@ -1,4 +1,5 @@
-import { RESTPostAPIChatInputApplicationCommandsJSONBody } from "discord.js";
+import { type RESTPostAPIChatInputApplicationCommandsJSONBody } from "discord.js";
+
 import Omnibot from "./omnibot.js";
 
 export abstract class OmnibotModule {

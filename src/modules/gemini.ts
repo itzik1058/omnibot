@@ -1,6 +1,6 @@
 import {
   ChatSession,
-  Content,
+  type Content,
   GenerativeModel,
   GoogleGenerativeAI,
   HarmBlockThreshold,
@@ -9,12 +9,13 @@ import {
 import {
   Client,
   Events,
-  Interaction,
+  type Interaction,
   Message,
   MessageType,
-  RESTPostAPIChatInputApplicationCommandsJSONBody,
+  type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
 } from "discord.js";
+
 import config from "../config.js";
 import { OmnibotModule } from "../module.js";
 import Omnibot from "../omnibot.js";
@@ -28,7 +29,7 @@ export default class Gemini extends OmnibotModule {
     super(omnibot);
 
     this.gemini = new GoogleGenerativeAI(
-      config.geminiApiKey
+      config.geminiApiKey,
     ).getGenerativeModel({
       model: "gemini-2.0-flash",
       safetySettings: [
@@ -57,7 +58,9 @@ export default class Gemini extends OmnibotModule {
 
     omnibot.client.once(Events.ClientReady, this.onClientReady);
     omnibot.client.on(Events.InteractionCreate, this.onInteractionCreate);
-    omnibot.client.on(Events.MessageCreate, this.onMessageCreate);
+    omnibot.client.on(Events.MessageCreate, (message) => {
+      this.onMessageCreate(message).catch((e) => console.error(e));
+    });
   }
 
   public commands(): RESTPostAPIChatInputApplicationCommandsJSONBody[] {
@@ -65,7 +68,6 @@ export default class Gemini extends OmnibotModule {
       new SlashCommandBuilder()
         .setName("reset")
         .setDescription("Reset chat")
-        .setDMPermission(false)
         .toJSON(),
     ];
   }
@@ -122,7 +124,7 @@ export default class Gemini extends OmnibotModule {
             mimeType: attachment.contentType ?? "text/plain",
           },
         };
-      })
+      }),
     );
     console.info(`Gemini request: (${parts.length} attachments) ${request}`);
     try {

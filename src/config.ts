@@ -1,5 +1,7 @@
 import "dotenv/config";
+
 import assert from "node:assert";
+
 import untildify from "untildify";
 
 const config = {

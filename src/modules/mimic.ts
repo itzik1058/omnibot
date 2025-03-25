@@ -1,3 +1,5 @@
+import path from "node:path";
+
 import {
   AudioPlayerStatus,
   createAudioPlayer,
@@ -8,13 +10,13 @@ import {
 import {
   Events,
   GuildMember,
-  Interaction,
-  RESTPostAPIChatInputApplicationCommandsJSONBody,
+  type Interaction,
+  type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
-  VoiceBasedChannel,
+  type VoiceBasedChannel,
 } from "discord.js";
 import { glob } from "glob";
-import path from "node:path";
+
 import config from "../config.js";
 import { OmnibotModule } from "../module.js";
 import Omnibot from "../omnibot.js";
@@ -32,11 +34,15 @@ export default class Mimic extends OmnibotModule {
     this.queue = [];
     this.task = new ErlangScheduledTask(
       this.playRandom.bind(this),
-      24 * 60 * 60 * 1000
+      24 * 60 * 60 * 1000,
     );
 
-    omnibot.client.once(Events.ClientReady, this.onClientReady);
-    omnibot.client.on(Events.InteractionCreate, this.onInteractionCreate);
+    omnibot.client.once(Events.ClientReady, () => {
+      this.onClientReady().catch((e) => console.error(e));
+    });
+    omnibot.client.on(Events.InteractionCreate, (interaction) => {
+      this.onInteractionCreate(interaction).catch((e) => console.error(e));
+    });
   }
 
   public commands(): RESTPostAPIChatInputApplicationCommandsJSONBody[] {
@@ -49,7 +55,7 @@ export default class Mimic extends OmnibotModule {
           option
             .setName("path")
             .setDescription("Resource path")
-            .setAutocomplete(true)
+            .setAutocomplete(true),
         )
         .toJSON(),
     ];
@@ -58,10 +64,10 @@ export default class Mimic extends OmnibotModule {
   private onClientReady = async () => {
     const mimic = await glob(path.join(config.dataPath, "audio/mimic/**/*.*"));
     const terraria = await glob(
-      path.join(config.dataPath, "audio/terraria/**/*.*")
+      path.join(config.dataPath, "audio/terraria/**/*.*"),
     );
     this.audio = [...mimic, ...terraria].map((resource) =>
-      path.relative(config.dataPath, resource)
+      path.relative(config.dataPath, resource),
     );
     this.task.start();
   };
@@ -94,7 +100,7 @@ export default class Mimic extends OmnibotModule {
         case "path":
           {
             const pattern = new RegExp(
-              Array.from(focused.value.toLowerCase()).join(".*?")
+              Array.from(focused.value.toLowerCase()).join(".*?"),
             );
             const options = this.audio
               .filter((resource) => pattern.test(resource.toLowerCase()))
