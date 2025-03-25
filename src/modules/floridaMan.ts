@@ -35,20 +35,25 @@ export default class FloridaMan extends OmnibotModule {
   }
 
   private onClientReady = () => {
-    const rawData = JSON.parse(
-      readFileSync(
-        path.join(config.dataPath, "attachments/florida_man.json"),
-        "utf-8"
-      )
-    ) as Array<FloridaManRawEntry>;
-    this.data = rawData.map((entry) => ({
-      post_id: entry.post_id,
-      created_at: new Date(entry.created_at),
-      score: Number(entry.score),
-      title: entry.title,
-      posted_by: entry.posted_by,
-      url: entry.url,
-    }));
+    this.data = [];
+    try {
+      const rawData = JSON.parse(
+        readFileSync(
+          path.join(config.dataPath, "attachments/florida_man.json"),
+          "utf-8",
+        ),
+      ) as Array<FloridaManRawEntry>;
+      this.data = rawData.map((entry) => ({
+        post_id: entry.post_id,
+        created_at: new Date(entry.created_at),
+        score: Number(entry.score),
+        title: entry.title,
+        posted_by: entry.posted_by,
+        url: entry.url,
+      }));
+    } catch (e) {
+      console.error("Failed to load florida man data", e);
+    }
   };
 
   async sendFloridaMan() {
