@@ -32,7 +32,7 @@ export default class Activity extends OmnibotModule {
     if (!existsSync(this.logPath))
       await writeFile(
         this.logPath,
-        ["id", "username", "join", "leave", "nickname"].join(","),
+        ["id", "username", "join", "leave", "nickname"].join(",") + "\n",
       );
     this.task.start();
   };
@@ -57,14 +57,13 @@ export default class Activity extends OmnibotModule {
       const now = new Date();
       await appendFile(
         this.logPath,
-        "\n" +
-          [
-            member.id,
-            member.user.username,
-            member.activityStart.toISOString(),
-            now.toISOString(),
-            member.nickname,
-          ].join(","),
+        [
+          member.user.id,
+          member.user.username,
+          member.activityStart.toISOString(),
+          now.toISOString(),
+          member.nickname,
+        ].join(",") + "\n",
       );
     }
     this.members = members;
