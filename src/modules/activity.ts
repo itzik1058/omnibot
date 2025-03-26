@@ -5,7 +5,7 @@ import { OmnibotModule } from "../module.js";
 import Omnibot from "../omnibot.js";
 import { ScheduledTask } from "../task.ts";
 
-type GuildMemberActivity = GuildMember & { start: Date };
+type GuildMemberActivity = GuildMember & { activityStart: Date };
 
 export default class Activity extends OmnibotModule {
   private members: Collection<string, GuildMemberActivity>;
@@ -26,14 +26,21 @@ export default class Activity extends OmnibotModule {
     const members = guild.channels.cache
       .filter((channel) => channel.isVoiceBased())
       .flatMap((channel) => channel.members)
-      .mapValues((member) => {
-        return { ...member, start: new Date() } as GuildMemberActivity;
-      });
-    this.members.difference(members).forEach((member) => {
+      .mapValues(
+        (member, key) =>
+          ({
+            ...member,
+            activityStart: this.members.get(key)?.activityStart ?? new Date(),
+          }) as GuildMemberActivity,
+      );
+    const previousMembers = new Set(this.members.map((_, key) => key));
+    const currentMembers = new Set(members.map((_, key) => key));
+    previousMembers.difference(currentMembers).forEach((key) => {
+      const member = this.members.get(key)!;
       const now = new Date();
       console.log(
         `Member ${member.user.username} was active`,
-        `from ${member.start.toString()} to ${now.toString()}`,
+        `from ${member.activityStart.toString()} to ${now.toString()}`,
       );
     });
     this.members = members;
