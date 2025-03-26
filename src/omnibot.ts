@@ -2,6 +2,7 @@ import { Client, Collection, Events, REST, Routes } from "discord.js";
 
 import config from "./config.js";
 import { OmnibotModule } from "./module.js";
+import Activity from "./modules/activity.js";
 import Echo from "./modules/echo.js";
 import FloridaMan from "./modules/floridaMan.js";
 import Gemini from "./modules/gemini.js";
@@ -18,6 +19,7 @@ export default class Omnibot {
   public constructor(client: Client) {
     this.client = client;
     this.modules = new Collection();
+    this.modules.set("activity", new Activity(this));
     this.modules.set("echo", new Echo(this));
     this.modules.set("floridaMan", new FloridaMan(this));
     this.modules.set("gemini", new Gemini(this));
