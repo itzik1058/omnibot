@@ -62,7 +62,7 @@ export default class Activity extends OmnibotModule {
           member.user.username,
           member.activityStart.toISOString(),
           now.toISOString(),
-          member.nickname,
+          '"' + member.nickname?.replace(/"/g, '""') + '"',
         ].join(",") + "\n",
       );
     }
