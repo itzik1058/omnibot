@@ -11,6 +11,7 @@ import {
   Events,
   GuildMember,
   type Interaction,
+  InteractionContextType,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
   type VoiceBasedChannel,
@@ -50,7 +51,7 @@ export default class Mimic extends OmnibotModule {
       new SlashCommandBuilder()
         .setName("mimic")
         .setDescription("Mimic")
-        .setDMPermission(false)
+        .setContexts(InteractionContextType.Guild)
         .addStringOption((option) =>
           option
             .setName("path")

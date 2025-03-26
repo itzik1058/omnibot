@@ -7,6 +7,7 @@ import {
   Events,
   GuildMember,
   type Interaction,
+  InteractionContextType,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
 } from "discord.js";
@@ -35,7 +36,7 @@ export default class Record extends OmnibotModule {
       new SlashCommandBuilder()
         .setName("record")
         .setDescription("Record conversation")
-        .setDMPermission(false)
+        .setContexts(InteractionContextType.Guild)
         .addUserOption((option) =>
           option
             .setName("user")

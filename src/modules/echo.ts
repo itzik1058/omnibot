@@ -1,6 +1,7 @@
 import {
   Events,
   type Interaction,
+  InteractionContextType,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
 } from "discord.js";
@@ -23,6 +24,7 @@ export default class Echo extends OmnibotModule {
       new SlashCommandBuilder()
         .setName("echo")
         .setDescription("Echo")
+        .setContexts(InteractionContextType.Guild)
         .addStringOption((option) =>
           option.setName("content").setDescription("content").setRequired(true),
         )

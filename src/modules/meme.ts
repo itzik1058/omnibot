@@ -3,6 +3,7 @@ import path from "node:path";
 import {
   Events,
   type Interaction,
+  InteractionContextType,
   type RESTPostAPIChatInputApplicationCommandsJSONBody,
   SlashCommandBuilder,
 } from "discord.js";
@@ -38,7 +39,11 @@ export default class Meme extends OmnibotModule {
 
   public commands(): RESTPostAPIChatInputApplicationCommandsJSONBody[] {
     return [
-      new SlashCommandBuilder().setName("meme").setDescription("Meme").toJSON(),
+      new SlashCommandBuilder()
+        .setName("meme")
+        .setDescription("Meme")
+        .setContexts(InteractionContextType.Guild)
+        .toJSON(),
     ];
   }
 
